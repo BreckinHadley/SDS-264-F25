@@ -184,6 +184,7 @@ vaccine_data |>
 ```
 
 
+
 6. In this question we will focus only on the 12 states in the Midwest (i.e. where region == "Midwest").
 
 a) Create a tibble with the following information for each state.  Order states from least to greatest state population.

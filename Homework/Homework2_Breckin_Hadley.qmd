@@ -1,10 +1,12 @@
 ---
-title: "Strings: In-class Exercises (Part 2)"
-format:
-  html: default
-editor_options: 
-  chunk_output_type: console
+title: "Homework #2"
+author: "Breckin Hadley"
+format: html
+editor: visual
 ---
+
+
+##03_strings_part2 1-17
 
 You can download this .qmd file from [here](https://github.com/proback/264_fall_2025/blob/main/03_strings_part2.qmd).  Just hit the Download Raw File button.
 
@@ -111,8 +113,10 @@ filter(spot_smaller, str_detect(spot_smaller$subgenre, "pop"))
 
 ```{r}
 spot_smaller|>
-  filter(spot_smaller, str_detect(spot_smaller$subgenre, "pop"))|>
+  filter(spot_smaller, str_detect(spot_smaller$subgenre, "pop"))+
+
 mean(str_length(title))
+
 
 ```
 
@@ -145,12 +149,11 @@ Producing a table like this would be SUPER great (hint: ifelse()):
 2 Genre without pop              18.6
 
 ```{r}
-spot_smaller |>
-  mutate(
-    title_length = str_length(title),
-    sub_pop = ifelse(str_detect(subgenre, "pop"), "Genre with pop","Genre without pop" )) |>
-  group_by(sub_pop) |>
-  summarise(mean_title_length = mean(title_length, na.rm = TRUE)
+spot_smaller|>
+  mutate( title_length = str_length(title),
+          sub_pop = iflese(str_detect(spot_smaller$subgenre, "pop"," Genre with pop" = "TRUE", "Genre without pop" = "FALSE"))|>
+  group_by(sub_pop)|>
+  summarise(mean_title_length = mean(title_length))
 ```
 
 4. In the bigspotify dataset, find the proportion of songs which contain "love" in the title (track_name) by playlist_genre.
@@ -307,6 +310,9 @@ str_view(spot_smaller$album_name, "^.*$")
 #\\{.+\\}
 str_view(spot_smaller$album_name,"\\{.+\\}")
 ```
+
+
+
 
 
 10. Create regular expressions to find all `stringr::words` that:
@@ -468,3 +474,124 @@ sentences |>
 ```
 >This code will switch the order of the second and third words. 
 
+
+
+
+
+You can download this .qmd file from [here](https://github.com/proback/264_fall_2025/blob/main/04_strings_part3.qmd).  Just hit the Download Raw File button.
+
+```{r}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(rvest)
+library(httr)
+```
+
+
+##04_strings_part3 1-8
+
+1. Describe the equivalents of ?, +, * in {m,n} form.
+ 
+> ? = zero or one occurrence
++ = one or more occurrences
+* = zero or more occurrences
+
+
+2. Describe, in words, what the expression "(.)(.)\\2\\1" will match, and provide a word or expression as an example.
+
+>This expression (.) matches any single character. And this expression (.) also mathces any single character \2 → backreference to group 2, so the same character as B must appear next.
+\1 → backreference to group 1, so the same character as A must appear after that.
+
+>Examples abba, noon, 1221
+
+3. Produce an R string which the regular expression represented by "\\..\\..\\.." matches.  In other words, find a string `y` below that produces a TRUE in `str_detect`.
+
+```{r}
+y <- ".a.b.c"
+str_detect(y, "\\..\\..\\..")
+```
+
+4. Solve with `str_subset()`, using the words from `stringr::words`:
+
+- Find all words that start or end with x.
+```{r}
+library(stringr)
+
+str_subset(words, "^(x|.*x$)")
+```
+
+- Find all words that start with a vowel and end with a consonant.
+```{r}
+library(stringr)
+str_subset(words, "^[aeiou].*[^aeiou]$")
+
+
+```
+- Find all words that start and end with the same letter
+```{r}
+library(stringr)
+str_subset(words, "^([a-z]).*\\1$")
+
+
+```
+
+
+5. What words in `stringr::words` have the highest number of vowels? What words have the highest proportion of vowels? (Hint: what is the denominator?)  Figure this out using the tidyverse and piping, starting with `as_tibble(words) |>`.
+
+```{r}
+as_tibble(words) |>
+  rename(word = value) |>
+  mutate(
+    vowels = str_count(word, "[aeiou]"),
+    letters = str_length(word),
+    prop_vowels = vowels / letters
+  ) |>
+  arrange(desc(vowels)) |>
+  slice_max(vowels, with_ties = TRUE)
+```
+
+6. From the Harvard sentences data, use `str_extract` to produce a tibble with 3 columns:  the sentence, the first word in the sentence, and the first word ending in "ed" (NA if there isn't one).
+
+```{r}
+sentences |>
+  as_tibble() |>
+  rename(sentence = value) |>
+  mutate(
+    first_word = str_extract(sentence, "^\\w+"),
+    first_ed   = str_extract(sentence, "\\b\\w+ed\\b")
+  )
+
+```
+
+
+7. Find and output all contractions (words with apostrophes) in the Harvard sentences, assuming no sentence has multiple contractions.
+
+```{r}
+sentences |>
+  as_tibble() |>
+  rename(sentence = value) |>
+  mutate(contraction = str_extract(sentence, "\\b\\w+'\\w+\\b")) |>
+  filter(!is.na(contraction))
+```
+
+
+8. *Carefully* explain what the code below does, both line by line and in general terms.
+
+```{r}
+temp <- str_replace_all(words, "^([A-Za-z])(.*)([a-z])$", "\\3\\2\\1")
+as_tibble(words) |>
+  semi_join(as_tibble(temp)) |>
+  print(n = Inf)
+```
+
+This swaps the first and last letters of the then prints every words that are the result of swapping the first/last letters of some word (including words unchanged by the swap).
+
+>Line 1: In temp we string replace with the words data set. We want to replace any word that starts with A-Z or a-z then replace it with the last letter of the word which ranges from a-z
+
+>Line 2: Create a tibble of the words data set
+
+>Line 3: Only print the x values
+
+>Line 4: Prints all rows instead of truncating the tibble.
