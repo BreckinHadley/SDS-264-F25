@@ -1,0 +1,67 @@
+---
+title: "R Tip of the Day - GWalkR"
+subtitle: "Breckin Hadley"
+format: 
+  revealjs: default
+editor: visual
+---
+
+## What is GWalkR?
+
+-   GWalkR is an R package that is used to simplify explanatory data analysis and data visualization.
+
+-   Replicates a majority of the features used by the data visualization software Tableau but in the R universe.
+
+-   The package only contains three main functions
+
+## What is Tableau?
+
+-   Tableau is a software tool targeted at Data Analysts, Sales people, marketing agents who do not have experience in SQL, Alteryx, or R studio.
+
+-   Tableau is praised for its smooth automation and its ability to easily integrate data.
+
+-   Used by a wide variety of company's in varying number of fields
+
+## Tableau visualization examples:
+
+::: {layout-ncol="2"}
+![](images/clipboard-901759840.png){width="400"}
+
+![](images/clipboard-21363019.png){width="400"}
+
+![](images/clipboard-3842863063.png){width="350"}
+
+![](images/clipboard-1300379059.png){width="400"}
+:::
+
+## What does GWalkR do?
+
+-   Creates a very similar interactive interface where the user can alter the visualizations however they see fit.
+-   Has the ability for users to drag and drop variables into the GWalkR environment and easily create charts and graphs.
+-   A large variety of visualization options so the user can get the visualization that best showcases there data.
+
+## Code in Action (gwalkr)
+
+This is the main function in the package that launches the interactive interface.
+
+``` r
+library(GWalkR)
+data(iris)
+gwalkr(iris)
+```
+
+## GWalkR Code in Action
+
+**(gwalkrOutput and renderGwalkr)**
+
+These are two other functions in the package that help incorporate the GWalkR interface into Shiny apps.
+
+``` r
+#gwalkrOutput
+gwalkrOutput(outputId, width = "100%", height = "100%")
+
+#renderGwalkr
+renderGwalkr(expr, env = parent.frame(), quoted = FALSE)
+```
+
+## Thank You
